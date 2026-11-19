@@ -14,6 +14,7 @@ SQLite 3.45.1 ve MariaDB 10.11.14 üzerinde ölçüldü.
 | `LIKE 'a!_b' ESCAPE '!'` | `1` | `1` |
 | `LIKE 'a\\_b' ESCAPE '\\'` | **hata** (`ESCAPE` tek karakter olmalı) | `1` |
 | `'a' \|\| 'b'` | `ab` | `0` (mantıksal VEYA) |
+| `CONCAT('a', 'b')` | `ab` | `ab` |
 | `5 / 2` | `2` | `2.5000` |
 | `INTEGER` sütununa `'abc'` ekleme | sessizce saklar | **hata** (katı kip) |
 | `GROUP BY` ile gruplanmamış sütun | çalışır, satır gelişigüzel | **hata** (`ONLY_FULL_GROUP_BY`) |
@@ -27,7 +28,7 @@ SQLite 3.45.1 ve MariaDB 10.11.14 üzerinde ölçüldü.
 ## Ne yapmalı
 
 - **`ESCAPE`:** Ters bölü yerine başka bir karakter kullan, örneğin `ESCAPE '!'`. İki motorda da aynı çalışır. `'\'` MySQL'de, `'\\'` SQLite'ta sorun çıkarır.
-- **Birleştirme:** `||` yerine `CONCAT()` MySQL'de çalışır ama SQLite'ta yoktur. Taşınabilir bir yol uygulama katmanında birleştirmektir. Laravel gibi bir sorgu oluşturucu kullanıyorsan ham SQL'den kaçın.
+- **Birleştirme:** `||` yerine `CONCAT()` kullan. İki motorda da aynı sonucu verir. SQLite'ta bu fonksiyon 3.44 sürümünden beri vardır, burada 3.45.1 ile ölçüldü. Daha eski bir SQLite kullanıyorsan birleştirmeyi uygulama katmanında yap.
 - **Bölme:** Tam sayı bölmesine güvenme, bir tarafı `1.0` ile çarp ya da uygulama katmanında böl.
 - **Türler ve `GROUP BY`:** Test ortamını da katı kipte çalıştır. MySQL tarafında `sql_mode` değerini üretimle aynı yap ya da testleri MySQL'e karşı koştur.
 - **`TEXT` sınırı:** Büyük metin için `MEDIUMTEXT` kullan ve yazmadan önce bayt uzunluğunu doğrula (`strlen`, karakter sayısı değil). Üretimde `sql_mode` içinde `STRICT_TRANS_TABLES` açık olsun ki kırpma hata olarak görünsün.

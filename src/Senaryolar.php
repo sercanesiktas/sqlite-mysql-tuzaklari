@@ -46,6 +46,13 @@ final class Senaryolar
                 'beklenen' => ['sqlite' => ['ok' => 'ab'], 'mysql' => ['ok' => '0']],
             ],
             [
+                'ad' => 'concat-fonksiyonu',
+                'baslik' => "CONCAT('a', 'b')",
+                'aciklama' => "|| yerine CONCAT() iki motorda da aynı çalışır. SQLite'ta bu fonksiyon 3.44 sürümünden beri var.",
+                'sorgu' => "SELECT CONCAT('a', 'b')",
+                'beklenen' => ['sqlite' => ['ok' => 'ab'], 'mysql' => ['ok' => 'ab']],
+            ],
+            [
                 'ad' => 'tam-sayi-bolme',
                 'baslik' => '5 / 2',
                 'aciklama' => "SQLite iki tam sayıyı bölünce tam sayı verir, MySQL ondalıklı.",
