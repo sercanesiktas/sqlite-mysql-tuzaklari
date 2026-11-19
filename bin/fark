@@ -1,0 +1,20 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+require __DIR__ . '/../src/Senaryolar.php';
+require __DIR__ . '/../src/Calistirici.php';
+
+use Tuzaklar\Calistirici;
+use Tuzaklar\Senaryolar;
+
+$c = Calistirici::olustur();
+$kisalt = static fn (string $s): string => mb_strlen($s) > 60 ? mb_substr(str_replace("\n", ' ', $s), 0, 57) . '...' : str_replace("\n", ' ', $s);
+$goster = static fn (array $r): string => $r['durum'] === 'ok' ? 'ok: ' . ($r['deger'] === '' ? '(boş)' : $r['deger']) : ($r['durum'] === 'yok' ? '-' : 'HATA: ' . $r['deger']);
+
+echo 'SQLite ' . (new PDO('sqlite::memory:'))->query('select sqlite_version()')->fetchColumn() . ' · MySQL/MariaDB ' . $c->mysqlSurum() . "\n\n";
+echo "| Senaryo | SQLite | MySQL |\n|---|---|---|\n";
+foreach (Senaryolar::hepsi() as $s) {
+    echo '| ' . $s['baslik'] . ' | ' . $kisalt($goster($c->calistir('sqlite', $s))) . ' | ' . $kisalt($goster($c->calistir('mysql', $s))) . " |\n";
+}
