@@ -24,6 +24,13 @@ SQLite 3.45.1 ve MariaDB 10.11.14 üzerinde ölçüldü.
 | `LIKE '%ş%'`, `utf8mb4_turkish_ci` | collation adı tanınmaz | `2` satır |
 | `LIKE '%ş%'`, bağlantı `latin1` | `2` satır | **`0` satır**, hata yok |
 | `'IŞIK' LIKE 'ışık'` | `0` | `1` |
+| `SUBSTR('abcdef', 0, 3)` | `ab` | boş metin |
+| `'abc' = 0` | `0` | **`1`** (metin sayıya çevrilir) |
+| `'' = 0` | `0` | **`1`** |
+| `INSERT OR IGNORE` | çalışır | **söz dizimi hatası** (karşılığı `INSERT IGNORE`) |
+| `INTEGER PRIMARY KEY AUTOINCREMENT` | çalışır | **söz dizimi hatası** (`AUTO_INCREMENT`) |
+| `DATE('now')` | bugünün tarihi | **`NULL`**, hata yok |
+| `STRFTIME('%Y', ...)` | çalışır | **hata** (fonksiyon yok, karşılığı `DATE_FORMAT`) |
 
 ## Ne yapmalı
 

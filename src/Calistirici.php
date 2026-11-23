@@ -90,7 +90,7 @@ final class Calistirici
     private function temizle(PDO $db, string $motor): void
     {
         if ($motor === 'sqlite') {
-            foreach ($db->query("SELECT name FROM sqlite_master WHERE type = 'table'")->fetchAll(PDO::FETCH_COLUMN) as $t) {
+            foreach ($db->query("SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite\\_%' ESCAPE '\\'")->fetchAll(PDO::FETCH_COLUMN) as $t) {
                 $db->exec("DROP TABLE \"$t\"");
             }
             return;
