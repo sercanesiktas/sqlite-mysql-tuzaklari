@@ -138,6 +138,56 @@ final class Senaryolar
                 'sorgu' => "SELECT 'IŞIK' LIKE 'ışık'",
                 'beklenen' => ['sqlite' => ['ok' => '0'], 'mysql' => ['ok' => '1']],
             ],
+            [
+                'ad' => 'substr-sifir',
+                'baslik' => "SUBSTR('abcdef', 0, 3)",
+                'aciklama' => "Konum 0 verilince SQLite ilk karakterden önce başlar ve yalnızca 'ab' döner, MySQL boş metin döner. İkisinde de konum 1'den başlar.",
+                'sorgu' => "SELECT SUBSTR('abcdef', 0, 3)",
+                'beklenen' => ['sqlite' => ['ok' => 'ab'], 'mysql' => ['ok' => '']],
+            ],
+            [
+                'ad' => 'metin-sayi-karsilastirma',
+                'baslik' => "'abc' = 0",
+                'aciklama' => "MySQL metni sayıya çevirir ('abc' 0 olur), bu yüzden eşit çıkar. SQLite türleri karşılaştırmaz, eşit saymaz.",
+                'sorgu' => "SELECT 'abc' = 0",
+                'beklenen' => ['sqlite' => ['ok' => '0'], 'mysql' => ['ok' => '1']],
+            ],
+            [
+                'ad' => 'bos-metin-sayi-karsilastirma',
+                'baslik' => "'' = 0",
+                'aciklama' => "Boş metin MySQL'de 0'a eşittir, bu yüzden WHERE sutun = 0 boş metin satırlarını da getirir. SQLite getirmez.",
+                'sorgu' => "SELECT '' = 0",
+                'beklenen' => ['sqlite' => ['ok' => '0'], 'mysql' => ['ok' => '1']],
+            ],
+            [
+                'ad' => 'insert-or-ignore',
+                'baslik' => 'INSERT OR IGNORE',
+                'aciklama' => "SQLite'ın çakışmayı yoksayan ekleme sözdizimi MySQL'de yoktur, MySQL'in karşılığı INSERT IGNORE'dur.",
+                'kurulum' => ['CREATE TABLE t (id INT PRIMARY KEY)', 'INSERT INTO t VALUES (1)'],
+                'sorgu' => 'INSERT OR IGNORE INTO t VALUES (1)',
+                'beklenen' => ['sqlite' => ['ok' => ''], 'mysql' => ['hata' => 'syntax']],
+            ],
+            [
+                'ad' => 'autoincrement',
+                'baslik' => 'INTEGER PRIMARY KEY AUTOINCREMENT',
+                'aciklama' => "SQLite'ta AUTOINCREMENT, MySQL'de AUTO_INCREMENT yazılır. Sütun tanımı göçte olduğu gibi çalışmaz.",
+                'sorgu' => 'CREATE TABLE a (id INTEGER PRIMARY KEY AUTOINCREMENT)',
+                'beklenen' => ['sqlite' => ['ok' => ''], 'mysql' => ['hata' => 'syntax']],
+            ],
+            [
+                'ad' => 'date-now-sessiz',
+                'baslik' => "DATE('now')",
+                'aciklama' => "SQLite 'now' ile bugünün tarihini verir. MySQL'de aynı çağrı hata vermez, NULL döner ve tarih kolonuna sessizce NULL yazılır.",
+                'sorgu' => "SELECT DATE('now') IS NULL",
+                'beklenen' => ['sqlite' => ['ok' => '0'], 'mysql' => ['ok' => '1']],
+            ],
+            [
+                'ad' => 'strftime',
+                'baslik' => 'STRFTIME()',
+                'aciklama' => "SQLite'a özgü tarih biçimleme fonksiyonu MySQL'de yoktur (karşılığı DATE_FORMAT).",
+                'sorgu' => "SELECT STRFTIME('%Y', '2026-11-23')",
+                'beklenen' => ['sqlite' => ['ok' => '2026'], 'mysql' => ['hata' => 'does not exist']],
+            ],
         ];
     }
 }
